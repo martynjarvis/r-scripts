@@ -1,7 +1,7 @@
 library("forecast")
 library("pracma")
 
-setwd("C:/Users/Martyn/Projects/r-thing/")
+setwd("~/Projects/r-thing/")
 subs = read.table("subs2.dat",sep = ",") 
 colnames(subs) <- c("date","players")
 subs$date <- as.Date(subs$date)
@@ -24,8 +24,23 @@ subs.work <- window((subs.ts), start=2009, end =2014)
 plot(subs.work)
 
 #decompose in to sesonal (weekly), trend and random components
-subs.dc<-(decompose(subs.work))
+subs.dc<-(decompose(subs.work,type="multiplicative"))
 plot(subs.dc)
+help(decompose)
+
+summary(subs.dc$random)
+hist(subs.dc$random)
+acf(subs.dc$random, lag.max=20)
+
+# stl more robust
+subs.stl<-stl(subs.work,s.window='periodic')
+plot(subs.stl)
+
+names(subs.stl)
+summary(subs.stl$remainder)
+hist(subs.stl$remainder)
+acf(subs.stl$remainder, lag.max=20)
+
 
 # Exponential stuff below here:
 
